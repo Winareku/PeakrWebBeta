@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Peakr – Ranking Completo</title>
+  <link rel="stylesheet" href="ui.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+  <style>
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  .ranking-full-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 32px;
+    padding: 32px;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .podium-column {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+  .list-column {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .podium {
+    width: 100%;
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 0;
+  }
+
+  .podium-card {
+    max-width: none;
+    flex: 1 1 0;
+    aspect-ratio: 1 / 1;
+  }
+
+  .podium-card.rank-1 { flex-grow: 1.4; order: 2; border-width: 5px; }
+  .podium-card.rank-2 { flex-grow: 1.15; order: 1; border-width: 4px; }
+  .podium-card.rank-3 { flex-grow: 0.9;  order: 3; border-width: 3px; }
+
+  @media (min-width: 1200px) {
+    .podium-card.rank-1 { max-width: 420px; }
+    .podium-card.rank-2 { max-width: 350px; }
+    .podium-card.rank-3 { max-width: 300px; }
+  }
+
+  @media (max-width: 600px) {
+    .podium {
+      flex-direction: column !important;
+      align-items: center !important;
+      gap: 12px !important;
+    }
+    .podium-card {
+      flex: none !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      aspect-ratio: 4 / 3 !important;
+    }
+    .podium-card.rank-1 { order: 1 !important; }
+    .podium-card.rank-2 { order: 2 !important; }
+    .podium-card.rank-3 { order: 3 !important; }
+  }
+
+  .ranking-item { min-height: 150px; }
+  .ranking-left-card { min-height: 150px; }
+
+  .ranking-edit-btn,
+  .podium-edit-btn { display: none !important; }
+
+  .fab-export-ranking {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    background: var(--primary);
+    color: var(--on-primary);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+    z-index: 100;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .fab-export-ranking:hover { transform: scale(1.08); box-shadow: 0 8px 25px rgba(0,0,0,0.6); }
+  .fab-export-ranking:active { transform: scale(0.95); }
+  .fab-export-ranking .material-symbols-outlined { font-size: 24px; line-height: 1; }
+</style>
+</head>
+<body>
+  <header class="header-m3">
+    <h1>Peakr – Ranking</h1>
+  </header>
+
+  <div class="ranking-full-container">
+    <div class="podium-column">
+      <div id="podium-container" class="podium"></div>
+    </div>
+    <div class="list-column">
+      <div id="list-container" class="ranking-list"></div>
+    </div>
+  </div>
+
+  <div id="modal-overlay" class="overlay hidden">
+    <div class="m3-modal">
+      <h3 id="modal-title">Añadir elemento</h3>
+      <div class="input-group">
+        <label for="edit-display">Nombre *</label>
+        <input type="text" id="edit-display" placeholder="Ej: Bohemian Rhapsody" class="m3-input" autocomplete="off">
+      </div>
+      <div class="input-group">
+        <label for="edit-artist">Subtítulo / Descripción</label>
+        <input type="text" id="edit-artist" placeholder="Ej: Queen" class="m3-input" autocomplete="off">
+      </div>
+      <div class="input-group">
+        <label for="edit-link">Enlace</label>
+        <div style="display:flex; gap:8px;">
+          <input type="text" id="edit-link" placeholder="https://..." class="m3-input" autocomplete="off" style="flex:1;">
+          <button id="btn-current-page" class="m3-btn outline" title="Usar página actual" type="button" style="padding: 0 12px;">
+            <span class="material-symbols-outlined">language</span>
+          </button>
+        </div>
+      </div>
+      <div class="input-group">
+        <label for="edit-img">Imagen (URL)</label>
+        <input type="text" id="edit-img" placeholder="https://...jpg" class="m3-input" autocomplete="off">
+      </div>
+      <div class="modal-actions">
+        <button id="btn-delete-modal" class="m3-btn danger hidden icon-only" style="margin-right: auto;" title="Eliminar">
+          <span class="material-symbols-outlined">delete</span>
+        </button>
+        <button id="btn-cancel-modal" class="m3-btn text">Cancelar</button>
+        <button id="btn-save-modal" class="m3-btn primary">Añadir</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-stack"></div>
+
+  <script src="../scripts/modules/state.js"></script>
+  <script src="../scripts/modules/storage.js"></script>
+  <script src="../scripts/modules/elo.js"></script>
+  <script src="../scripts/modules/ui/base.js"></script>
+  <script src="../scripts/modules/ui/toast.js"></script>
+  <script src="../scripts/modules/ui/modal.js"></script>
+  <script src="../scripts/modules/ui/ranking.js"></script>
+  <script src="../scripts/modules/ui/ranking-full.js"></script>
+
+  <button id="fab-export-ranking" class="fab-export-ranking" title="Descargar ranking como HTML">
+    <span class="material-symbols-outlined">download</span>
+  </button>
+</body>
+</html>

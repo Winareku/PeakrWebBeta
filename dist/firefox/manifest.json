@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "Peakr",
+  "version": "1.0",
+  "description": "Rankea mediante duelos 1v1.",
+  "permissions": ["storage", "tabs", "downloads"],
+  "host_permissions": [
+    "https://api.deezer.com/",
+    "https://www.deezer.com/",
+    "https://cdnt-preview.dzcdn.net/"
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "peakr@extension.local",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
+    }
+  },
+  "sidebar_action": {
+    "default_title": "Peakr",
+    "default_panel": "ui/ui.html",
+    "default_icon": "assets/icon.png"
+  },
+  "icons": {
+    "48": "assets/icon.png"
+  },
+  "background": {
+    "scripts": ["background/background.js"],
+    "type": "module"
+  }
+}
