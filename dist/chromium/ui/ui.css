@@ -1,0 +1,1288 @@
+/* ── Tokens ──────────────────────────────────────────────── */
+:root {
+  --bg-color: #121212;
+  --surface: #1e1e1e;
+  --surface-var: #2d2d2d;
+  --surface-high: #383838;
+  --primary: #D0BCFF;
+  --on-primary: #381E72;
+  --text: #E6E1E5;
+  --text-sec: #CAC4D0;
+  --error: #F2B8B8;
+  --on-error: #601410;
+
+  --tier-s: #FFD700;
+  --tier-a: #00BFFF;
+  --tier-b: #32CD32;
+  --tier-c: #A9A9A9;
+
+  --r-sm: 12px;
+  --r-md: 16px;
+  --r-lg: 24px;
+  --r-xl: 28px;
+}
+
+/* ── Reset ───────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+  background: var(--bg-color);
+  color: var(--text);
+  overflow-x: hidden;
+}
+
+/* ── Header ──────────────────────────────────────────────── */
+.header-m3 {
+  position: sticky;
+  top: 0;
+  background: var(--surface);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.header-m3 h1 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.header-m3 nav {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+/* ── Icon Button — true circle fix ──────────────────────── */
+.icon-btn {
+  /* Explicit square box: the only way border-radius:50% makes a true circle */
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
+  border-radius: 50%;
+  /* Flex centering keeps icon perfectly centred */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Reset browser defaults */
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--text-sec);
+  transition: background 0.18s, color 0.18s;
+  flex-shrink: 0;
+}
+
+.icon-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.icon-btn.active {
+  color: var(--primary);
+  background: rgba(208, 188, 255, 0.14);
+}
+
+.icon-btn .material-symbols-outlined {
+  font-size: 22px;
+  line-height: 1;
+  display: block;
+}
+
+/* ── Views ───────────────────────────────────────────────── */
+.view {
+  display: none;
+  padding: 16px;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.view.active {
+  display: flex;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ── Empty State ─────────────────────────────────────────── */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 16px;
+  padding: 48px 24px;
+  min-height: calc(100vh - 68px);
+}
+
+.empty-icon {
+  font-size: 72px;
+  color: var(--primary);
+  opacity: 0.5;
+}
+
+.empty-state h2 {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 500;
+}
+
+.empty-state p {
+  margin: 0;
+  color: var(--text-sec);
+  font-size: 0.9rem;
+  max-width: 240px;
+  line-height: 1.5;
+}
+
+
+/* ── Arena ───────────────────────────────────────────────── */
+.arena-wrapper {
+  margin: -16px;
+  /* undo view padding so cards bleed to edges */
+  flex: 1;
+  overflow: hidden;
+}
+
+.arena-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 60px);
+  position: relative;
+}
+
+.battle-card {
+  flex: 1;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--surface-var);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.battle-card:hover {
+  transform: scale(1.015);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+}
+
+.battle-card:active {
+  transform: scale(0.99);
+}
+
+.card-scrim {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);    /* un poco más oscuro por defecto */
+  pointer-events: none;
+  transition: background 0.25s ease;
+}
+
+.battle-card:hover .card-scrim {
+  background: rgba(0, 0, 0, 0.12);    /* se aclara al pasar el ratón */
+}
+
+.tier-badge {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  top: auto;
+  left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  z-index: 4;
+  backdrop-filter: blur(6px);
+  background: rgba(0, 0, 0, 0.55); /* fallback */
+}
+
+/* Nombre y artista (esquina superior izquierda) */
+.card-title-area {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 4;
+  max-width: 60%;
+  pointer-events: none;
+}
+
+.card-title-area .card-song {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
+  line-height: 1.2;
+  margin-bottom: 2px;
+}
+
+.card-title-area .card-artist {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.85);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+}
+
+.card-actions {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  gap: 8px;
+  z-index: 3;
+}
+
+/* Card action buttons — true circle fix same as .icon-btn */
+.card-actions button {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  flex-shrink: 0;
+  transition: background 0.18s;
+}
+
+.card-actions button:hover {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.card-actions button .material-symbols-outlined {
+  font-size: 17px;
+  line-height: 1;
+  display: block;
+}
+
+/* VS badge interactivo */
+.vs-badge {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--surface-var);
+  color: var(--text);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.8rem;
+  z-index: 5;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.65);
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.2s;
+}
+
+.vs-badge .vs-text,
+.vs-badge .vs-dice {
+  position: absolute;
+  transition: opacity 0.2s;
+}
+
+.vs-badge .vs-text {
+  opacity: 1;
+}
+
+.vs-badge .vs-dice {
+  opacity: 0;
+  font-size: 24px;
+}
+
+.vs-badge:hover {
+  background: var(--surface-high);
+}
+
+.vs-badge:hover .vs-text {
+  opacity: 0;
+}
+
+.vs-badge:hover .vs-dice {
+  opacity: 1;
+  transform: rotate(15deg);
+}
+
+/* Animación de feedback al votar */
+@keyframes votePulse {
+  0%   { transform: scale(1); }
+  30%  { transform: scale(0.97); }
+  60%  { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+.battle-card.voted {
+  animation: votePulse 0.35s ease;
+  pointer-events: none;
+}
+
+
+/* ── Settings ────────────────────────────────────────────── */
+.settings-card {
+  background: var(--surface);
+  border-radius: var(--r-lg);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.settings-card h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.settings-desc {
+  margin: 0;
+  font-size: 0.84rem;
+  color: var(--text-sec);
+  line-height: 1.5;
+}
+
+.danger-zone h3 {
+  color: var(--error);
+}
+
+/* ── Overlays & Modals ───────────────────────────────────── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  padding: 16px;
+}
+
+.m3-modal {
+  background: var(--surface);
+  padding: 24px;
+  border-radius: var(--r-xl);
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+}
+
+.m3-modal h3 {
+  margin: 0 0 16px;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.confirm-text {
+  margin: 0 0 16px;
+  font-size: 0.88rem;
+  color: var(--text-sec);
+  line-height: 1.5;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.input-group label {
+  font-size: 0.78rem;
+  color: var(--text-sec);
+  font-weight: 500;
+}
+
+.m3-input {
+  width: 100%;
+  padding: 11px 14px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--surface-var);
+  background: var(--surface-var);
+  color: var(--text);
+  font-size: 0.88rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.m3-input:focus {
+  border-color: var(--primary);
+}
+
+.m3-input::placeholder {
+  color: rgba(255, 255, 255, 0.28);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+/* ── Buttons ─────────────────────────────────────────────── */
+.m3-btn {
+  padding: 10px 20px;
+  border-radius: 20px;
+  border: none;
+  font-weight: 500;
+  font-size: 0.88rem;
+  font-family: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: opacity 0.18s, transform 0.1s, background 0.18s;
+}
+
+.m3-btn:active {
+  transform: scale(0.96);
+}
+
+.m3-btn .material-symbols-outlined {
+  font-size: 18px;
+  line-height: 1;
+  display: block;
+}
+
+.m3-btn.primary {
+  background: var(--primary);
+  color: var(--on-primary);
+}
+
+.m3-btn.primary:hover {
+  opacity: 0.88;
+}
+
+.m3-btn.text {
+  background: transparent;
+  color: var(--primary);
+}
+
+.m3-btn.text:hover {
+  background: rgba(208, 188, 255, 0.1);
+}
+
+.m3-btn.outline {
+  background: transparent;
+  color: var(--primary);
+  border: 1px solid var(--primary);
+}
+
+/* ── Estado de bloqueo durante animación de batalla ────── */
+.arena-animating .battle-card {
+  pointer-events: none;
+}
+.arena-animating .battle-card:hover {
+  transform: none !important;
+  box-shadow: none !important;
+}
+.arena-animating .preview-btn,
+.arena-animating .card-actions,
+.arena-animating .vs-badge {
+  display: none !important;
+}
+
+/* Overlay de cambio de puntos (más grande, más lento) */
+.change-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 3rem;
+  font-weight: 900;
+  z-index: 10;
+  pointer-events: none;
+  animation: floatUp 1s ease forwards;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+}
+.change-overlay.positive { color: #4ade80; }
+.change-overlay.negative { color: #f87171; }
+
+@keyframes floatUp {
+  0%   { opacity: 1; transform: translate(-50%, -50%) scale(0.8); }
+  20%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -80%) scale(1.2); }
+}
+
+/* Brillo de ganador / perdedor (superposición de fade) */
+.win-glint,
+.lose-glint {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  animation: fadeInOut 1.2s ease forwards;
+}
+.win-glint {
+  background: rgba(0, 255, 0, 0.2);
+}
+.lose-glint {
+  background: rgba(255, 0, 0, 0.2);
+}
+@keyframes fadeInOut {
+  0%   { opacity: 0; }
+  15%  { opacity: 1; }
+  70%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Letra del nuevo Tier (después de pelea) */
+.tier-reveal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 5rem;
+  font-weight: 900;
+  z-index: 11;
+  pointer-events: none;
+  animation: tierRevealAnim 1.4s ease forwards;
+  text-shadow: 0 0 20px currentColor;
+}
+@keyframes tierRevealAnim {
+  0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+  20%  { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+  30%  { transform: translate(-50%, -50%) scale(1); }
+  80%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+}
+
+/* ── Animaciones de deslizamiento lateral ──────────────── */
+.battle-card.slide-out-top {
+  animation: slideOutTop 0.4s ease forwards;
+}
+.battle-card.slide-out-bottom {
+  animation: slideOutBottom 0.4s ease forwards;
+}
+@keyframes slideOutTop {
+  from { transform: translateX(0); opacity: 1; }
+  to   { transform: translateX(-100%); opacity: 0; }
+}
+@keyframes slideOutBottom {
+  from { transform: translateX(0); opacity: 1; }
+  to   { transform: translateX(100%); opacity: 0; }
+}
+
+/* Entrada de nuevas cartas */
+.battle-card.slide-in-top {
+  animation: slideInTop 0.4s ease forwards;
+}
+.battle-card.slide-in-bottom {
+  animation: slideInBottom 0.4s ease forwards;
+}
+@keyframes slideInTop {
+  from { transform: translateX(-100%); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+@keyframes slideInBottom {
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+
+/* Puntos animables */
+.points-value {
+  font-variant-numeric: tabular-nums; /* mantiene ancho fijo */
+}
+
+.m3-btn.outline:hover {
+  background: rgba(208, 188, 255, 0.08);
+}
+
+.m3-btn.danger {
+  background: var(--error);
+  color: var(--on-error);
+}
+
+.m3-btn.danger:hover {
+  opacity: 0.88;
+}
+
+.m3-btn.large {
+  padding: 14px 28px;
+  font-size: 1rem;
+  border-radius: 24px;
+}
+
+/* ── Toast Stack ─────────────────────────────────────────── */
+#toast-stack {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 32px);
+  max-width: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: stretch;
+  z-index: 200;
+  pointer-events: none;
+}
+
+.toast-item {
+  background: rgba(45, 45, 45, 0.65);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--text);
+  padding: 10px 8px 10px 14px;
+  border-radius: var(--r-sm);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  pointer-events: all;
+  font-size: 0.8rem;
+  line-height: 1.35;
+  animation: toast-in 0.28s cubic-bezier(0.34, 1.4, 0.64, 1) both;
+}
+
+.toast-msg {
+  flex: 1;
+}
+
+/* Toast close — true circle */
+.toast-close {
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  min-height: 28px;
+  border-radius: 50%;
+  background: none;
+  border: none;
+  color: var(--text-sec);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  flex-shrink: 0;
+  transition: background 0.18s;
+}
+
+.toast-close:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.toast-close .material-symbols-outlined {
+  font-size: 16px;
+  line-height: 1;
+  display: block;
+}
+
+.toast-item.fade-out {
+  animation: toast-out 0.25s ease forwards;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.94);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes toast-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+    max-height: 80px;
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin: 0;
+  }
+}
+
+.header-separator {
+  width: 1px;
+  height: 28px;
+  background: var(--surface-var);
+  margin: 0 6px;
+  flex-shrink: 0;
+}
+
+/* Imagen del ranking como botón (eliminado porque se integró arriba) */
+
+
+/* Botón "Usar página actual" dentro del input-group */
+#btn-current-page {
+  flex-shrink: 0;
+  height: 44px;
+  /* igual que los inputs */
+}
+
+/* ── Ranking Heading ──────────── */
+.ranking-heading {
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+/* ── Maturity Bar ───────────────────────────────────────── */
+.maturity-card {
+  background: var(--surface);
+  border-radius: var(--r-lg);
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.maturity-track {
+  flex: 1;
+  height: 8px;
+  background: var(--surface-var);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.maturity-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.4s ease, background 0.4s ease;
+  background: #F2B8B8;
+  /* rojo por defecto */
+}
+
+.maturity-label {
+  font-size: 0.75rem;
+  color: var(--text-sec);
+  white-space: nowrap;
+}
+
+/* ── Ranking List (nuevos items) ────────────────────────── */
+.ranking-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: 24px;
+}
+
+.ranking-item {
+  display: flex;
+  align-items: stretch;
+  overflow: hidden;
+  border-radius: var(--r-md);
+  transition: background 0.15s;
+}
+
+/* Tarjeta izquierda (imagen de fondo) */
+.ranking-left-card {
+  flex: 1;
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  border-radius: var(--r-md) 0 0 var(--r-md);
+  overflow: hidden;
+  cursor: pointer;
+  min-height: 100px;
+  box-shadow: inset 0 0 0 1px var(--bg-color);
+}
+
+.ranking-left-card:active {
+  transform: scale(0.99);
+}
+
+/* Overlay con degradado del tier y oscurecimiento */
+.ranking-left-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* Número de posición */
+.ranking-position {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 10px;
+  z-index: 2;
+}
+
+/* Texto (nombre y artista) sobre la imagen */
+.ranking-text-overlay {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 40px 12px 12px;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.85));
+  pointer-events: none;
+}
+
+.ranking-text-overlay strong {
+  display: block;
+  font-size: 0.9rem;
+  color: #fff;
+  font-weight: 600;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-bottom: 2px;
+  pointer-events: auto;
+  /* permite hacer clic en el título para abrir enlace */
+  cursor: pointer;
+}
+
+.ranking-text-overlay span {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.75);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+}
+
+/* Cuadrado de la derecha (letra del tier + puntos) */
+.ranking-right-badge {
+  width: 64px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface);
+  border-radius: 0 var(--r-md) var(--r-md) 0;
+  padding: 8px 4px;
+  gap: 2px;
+}
+
+.ranking-tier-letter {
+  display: block;
+  font-size: 1.6rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--text);
+}
+
+.ranking-points {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+
+/* ── Podium Moderno (tarjeta con footer) ──────────────── */
+.podium {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.podium-card {
+  flex: 1;
+  max-width: 150px;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  /* empuja el footer al fondo */
+  min-height: 240px;
+  /* base cuadrada */
+  cursor: pointer;
+  box-shadow: inset 0 0 0 1px var(--bg-color);
+}
+
+.podium-card.rank-1 {
+  min-height: 260px;
+  /* ligeramente más alto */
+  border: 2px solid var(--tier-s);
+  box-shadow: inset 0 0 0 1px var(--bg-color), 0 8px 28px rgba(255,215,0,0.3);
+}
+
+.podium-card.rank-2 {
+  min-height: 245px;
+  border: 2px solid #C0C0C0;                /* plata */
+  box-shadow: inset 0 0 0 1px var(--bg-color), 0 8px 28px rgba(192, 192, 192, 0.2);
+}
+
+.podium-card.rank-3 {
+  min-height: 230px;
+  border: 2px solid #CD7F32;                /* bronce */
+  box-shadow: inset 0 0 0 1px var(--bg-color), 0 8px 28px rgba(205, 127, 50, 0.2);
+}
+
+/* Overlay oscuro para que se vean los números y el texto */
+.podium-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);      /* más oscuro */
+  z-index: 0;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* Marca de agua con número gigante (más visible) */
+.podium-watermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 6rem;
+  font-weight: 900;
+  opacity: 0.12;
+  /* antes 0.08, ahora más presente */
+  color: #fff;
+  pointer-events: none;
+  z-index: 1;
+  line-height: 1;
+}
+
+/* Footer oscuro en la parte inferior */
+.podium-footer {
+  position: relative;
+  z-index: 2;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  padding: 10px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  border-radius: 0 0 var(--r-lg) var(--r-lg);
+}
+
+/* Nombre de la canción en el footer */
+.podium-name {
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-align: center;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+  cursor: pointer;
+}
+
+.podium-name:hover {
+  color: var(--primary);
+  text-decoration: underline;
+}
+
+/* Puntos en monospace */
+.podium-pts {
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--primary);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+/* Botón editar (flotante, visible al hover) */
+.podium-edit-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 5;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  border: none;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: auto;
+}
+
+.podium-card:hover .podium-edit-btn {
+  opacity: 1;
+}
+
+.podium-edit-btn .material-symbols-outlined {
+  font-size: 16px;
+  line-height: 1;
+}
+
+/* ── Ranking List (modificar para añadir botón editar) ─── */
+/* Añadimos el botón dentro de .ranking-left-card */
+.ranking-edit-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 5;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  border: none;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: auto;
+}
+
+.ranking-left-card:hover .ranking-edit-btn {
+  opacity: 1;
+}
+
+.ranking-edit-btn .material-symbols-outlined {
+  font-size: 16px;
+  line-height: 1;
+}
+
+/* Aseguramos que el click en la tarjeta no sea atrapado por hijos */
+.ranking-left-card {
+  cursor: pointer;
+}
+
+/* El título sigue siendo interactivo */
+.ranking-text-overlay strong {
+  pointer-events: auto;
+}
+
+/* ── Preview Button (abajo izquierda) ──────────────────── */
+.preview-btn {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  z-index: 5;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(6px);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: auto;
+}
+.battle-card:hover .preview-btn {
+  opacity: 1;
+}
+.preview-btn .material-symbols-outlined {
+  font-size: 20px;
+  line-height: 1;
+}
+
+/* ── FAB para añadir canción en Ranking ───────────────── */
+.fab-ranking {
+  display: none;                       /* oculto por defecto */
+  position: fixed;
+  bottom: 24px;
+  right: 16px;
+  width: 56px;
+  height: 56px;
+  min-width: 56px;
+  min-height: 56px;
+  border-radius: 16px;                 /* cuadrado con esquinas redondeadas */
+  background: var(--primary);
+  color: var(--on-primary);
+  border: none;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.45);
+  z-index: 50;
+  transition: transform 0.18s, box-shadow 0.18s;
+}
+/* Visible solo cuando la vista ranking está activa */
+#view-ranking.active .fab-ranking,
+#view-ranking.active .fab-open-ranking {
+  display: flex;
+}
+.fab-ranking:hover {
+  transform: scale(1.06);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.55);
+}
+.fab-ranking:active {
+  transform: scale(0.96);
+}
+.fab-ranking .material-symbols-outlined {
+  font-size: 24px;
+  line-height: 1;
+  display: block;
+}
+
+/* Versiones rápidas para el skip */
+.slide-out-top.fast {
+  animation-duration: 0.3s;
+}
+.slide-out-bottom.fast {
+  animation-duration: 0.3s;
+}
+.slide-in-top.fast {
+  animation-duration: 0.3s;
+}
+.slide-in-bottom.fast {
+  animation-duration: 0.3s;
+}
+
+/* ── FAB Open Ranking ───────────────────────────────────── */
+.fab-open-ranking {
+  display: none;
+  position: fixed;
+  bottom: 94px;           /* encima del fab-ranking */
+  right: 22px;            /* centrado visualmente con el grande */
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--surface-high);
+  color: var(--text);
+  border: none;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  z-index: 10;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.fab-open-ranking:hover {
+  transform: scale(1.12);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+}
+
+.fab-open-ranking .material-symbols-outlined {
+  font-size: 20px;
+}
+
+/* ── Switch & Deezer Section ────────────────────────────── */
+.deezer-section {
+  background: var(--surface-2);
+  border-radius: var(--r-md);
+  padding: 12px;
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.switch-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.switch-label {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.switch-thumb {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: rgba(255, 255, 255, 0.15);
+  transition: .3s;
+  border-radius: 24px;
+}
+
+.switch-thumb:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: var(--text-sec);
+  transition: .3s;
+  border-radius: 50%;
+}
+
+input:checked + .switch-thumb {
+  background-color: var(--primary);
+}
+
+input:checked + .switch-thumb:before {
+  transform: translateX(20px);
+  background-color: var(--on-primary);
+}
+
+/* ── Icon-only Button ───────────────────────────────────── */
+.m3-btn.icon-only {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
